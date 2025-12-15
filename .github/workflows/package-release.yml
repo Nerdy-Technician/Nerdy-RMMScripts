@@ -102,7 +102,7 @@ jobs:
           echo "Manifest:" && cat manifest.json
 
       - name: Upload artifacts (always)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: packaged-scripts
           path: |

@@ -19,13 +19,13 @@
 
   - | Category  | Description | Link to Folder |
       |-------------|-------------|-------------|
-      | [Tactical RMM Agent](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/TRMM%20Agent) | Scripts related to the Tactical RMM Agent | [Link to Folder](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/TRMM%20Agent) |
-      | [Security](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Security) | Scripts related to Security | [Link to Folder](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Security) |
-      | [OS Scripts](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/OS%20Scripts) | Scripts related for the OS | [Link to Folder](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/OS%20Scripts) |
-      | [Crontab](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Crontab) | Scripts related to Crontab | [Link to Folder](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Crontab) |
-      | [Monitoring](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Monitoring) | Scripts related to Monitoring | [Link to Folder](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Monitoring) |
-      | [Wazuh Agent](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Wazuh%20Agent) | Scripts related to Wazuh Agent | [Link to Folder](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Wazuh%20Agent) |
-      | [Software Management](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Software%20Management) | Scripts related to Software Management | [Link to Folder](https://github.com/Brandon-Roff/TRMM-Scripts/tree/main/Linux/Software%20Management) |
+      | [Tactical RMM Agent](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/TRMM%20Agent) | Scripts related to the Tactical RMM Agent | [Link to Folder](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/TRMM%20Agent) |
+      | [Security](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Security) | Scripts related to Security | [Link to Folder](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Security) |
+      | [OS Scripts](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/OS%20Scripts) | Scripts related for the OS | [Link to Folder](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/OS%20Scripts) |
+      | [Crontab](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Crontab) | Scripts related to Crontab | [Link to Folder](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Crontab) |
+      | [Monitoring](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Monitoring) | Scripts related to Monitoring | [Link to Folder](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Monitoring) |
+      | [Wazuh Agent](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Wazuh%20Agent) | Scripts related to Wazuh Agent | [Link to Folder](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Wazuh%20Agent) |
+      | [Software Management](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Software%20Management) | Scripts related to Software Management | [Link to Folder](https://github.com/Nerdy-Technician/Nerdy-RMMScripts/tree/main/Linux/Software%20Management) |
 
     
 ## Issues ⚠️ 

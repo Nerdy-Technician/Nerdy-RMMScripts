@@ -1,92 +1,74 @@
-[![TRMM LOGO](https://docs.tacticalrmm.com/images/onit.ico)](https://docs.tacticalrmm.com/)
+![REPO LOGO](Images/RepoLogo.png)
 
 
-# TacticalRMM Scripts Repository
+**129+ scripts** for Any RMM for agents on Windows & Linux. Organized by category, professionally named, production-ready.
 
-Welcome to the TacticalRMM Scripts repository! Here, you'll discover an array of meticulously crafted scripts tailored to augment and extend the capabilities of TacticalRMM across Windows and Linux systems.
+## 📊 Quick Stats
 
-## 🚀 Usage
+| Platform | Scripts | Categories |
+|----------|---------|-----------|
+| Linux | 76 | 12 categories |
+| Windows | 53 | PowerShell (40) + Batch (13) |
 
-1. **Navigate** to the folder corresponding to your system (`Windows` or `Linux`).
-2. **Select** the script best suited for your requirements.
-3. **Download** the chosen script to your TacticalRMM server or workstation.
-4. **Follow** any accompanying instructions or documentation provided with the script for seamless integration.
+## 📂 Folder Structure
 
-## 📥 Importing Scripts into TacticalRMM Web UI
+### Windows
+- **PowerShell:** Audit, Checks, Collect, Maintain, Security, Network, TRMM Agent, Wazuh Agent, Apps, AV, Quick Fixes
+- **Batch:** Common admin tasks [View](Windows/Batch/)
 
-1. **Access** the TacticalRMM web interface.
-2. **Navigate** to the `Scripts` section.
-3. **Click** on `Import Script`.
-4. **Browse** for the downloaded script file.
-5. **Provide** a descriptive name and optional description.
-6. **Assign** appropriate tags for easy categorization.
-7. **Save** the script.
-8. **Utilize** the imported script seamlessly within TacticalRMM.
+### Linux (12 categories)
+Audit, Collector Tasks, Crontab, Customization, Maintenance, Monitoring, Network, OS Scripts, Security, Software Management, TRMM Agent, Wazuh Agent
 
-## 🛠️ Scripts
+[View all categories](Linux/)
 
+## 🚀 Quick Start
 
-### Windows 🖥️
+1. **Navigate:** `Windows/Powershell/` or `Linux/<Category>/`
+2. **Download:** Choose your script
+3. **Import to TacticalRMM:** Scripts → Import Script → Browse
 
-#### PowerShell
+## 📋 Script Format
 
-| Category            | Description                                 | Link |
-|---------------------|---------------------------------------------|------|
-| Tactical RMM Agent  | Scripts related to the Tactical RMM Agent   | [Link](Windows/Powershell/TRMM%20Agent) |
-| Wazuh Agent         | Scripts related to the Wazuh Agent          | [Link](Windows/Powershell/Wazuh%20Agent) |
-| Collector Scripts   | Scripts for pulling data from Windows clients| [Link](Windows/Powershell/Collector%20Scripts) |
-| Apps                | Scripts for app list/install/uninstall      | [Link](Windows/Powershell/Apps) |
-| Checks              | Device and system checks                    | [Link](Windows/Powershell/Checks) |
-| Quick Fixes         | Quick remediation scripts                   | [Link](Windows/Powershell/Quick%20Fixes) |
-| AV                  | Antivirus related scripts                   | [Link](Windows/Powershell/AV) |
-| Network             | Network configuration and troubleshooting scripts | [Link](Windows/Powershell/Network) |
+All scripts follow: `<Category> - <Descriptive Title>.<ext>`
 
-#### Batch
+**Examples:** `Monitor - CPU Usage.sh`, `Check - Domain Connection.ps1`
 
-| Category | Description | Link |
-|----------|-------------|------|
-| Batch Scripts | Batch scripts for Windows (console output, admin tools, troubleshooting) | [Link](Windows/Batch/README.md) |
- 
+**Categories:** Check, Monitor, Audit, Collect, Agent, Software Management, Security, Maintain, Network, Customize, Cron, Image
 
-### Linux 🐧
+See [NAMING-CONVENTION.md](NAMING-CONVENTION.md) for details.
 
-| Category            | Description                                 | Link |
-|---------------------|---------------------------------------------|------|
-| Audit               | Audit scripts for Proxmox VM/LXC            | [Link](Linux/Audit) |
-| Collector Tasks     | Data collection scripts for Linux clients   | [Link](Linux/Collector%20Tasks) |
-| Crontab             | Crontab related scripts                     | [Link](Linux/Crontab) |
-| Customization       | Custom bashrc and environment scripts       | [Link](Linux/Customization) |
-| Maintenance         | Disk and kernel maintenance scripts         | [Link](Linux/Maintenance) |
-| Monitoring          | System monitoring scripts                   | [Link](Linux/Monitoring) |
-| Network             | Network configuration and troubleshooting scripts | [Link](Linux/Network) |
-| OS Scripts          | OS configuration and update scripts         | [Link](Linux/OS%20Scripts) |
-| Security            | Security and audit scripts                  | [Link](Linux/Security) |
-| Software Management | Software install and management scripts     | [Link](Linux/Software%20Management) |
-| TRMM Agent          | TRMM agent update/version scripts           | [Link](Linux/TRMM%20Agent) |
-| Wazuh Agent         | Wazuh agent install/update/version scripts  | [Link](Linux/Wazuh%20Agent) |
+## 📚 Documentation
 
+- [Linux README](Linux/README.md) - Linux scripts overview
+- [Batch README](Windows/Batch/README.md) - Batch scripts guide  
+- [Naming Convention](NAMING-CONVENTION.md) - Complete standards
+- Category READMEs - Detailed script listings in each folder
 
+## 📝 Recent Updates (v0.1.6)
 
+- ✅ Removed 119 duplicate files
+- ✅ Renamed 13 batch files to convention
+- ✅ Reorganized Windows PowerShell structure
+- ✅ Fixed typo: Maintence → Maintenance
+- ✅ Updated all documentation
 
-## 🌟 Contributing
+## 🤝 Contributing
 
-We warmly welcome contributions from our vibrant community to enrich the repository with innovative scripts. If you've crafted a script that could benefit other TacticalRMM users, feel free to submit a pull request adhering to our contribution guidelines.
+1. Follow naming: `<Category> - <Descriptive Title>.ext`
+2. Place in appropriate folder
+3. Update folder README
+4. Test thoroughly
+5. Submit PR
 
-## 🔑 License
+## 📄 License & Disclaimer
 
-This repository is licensed under the [MIT License](LICENSE), granting you the freedom to utilize, modify, and distribute the scripts for both personal and commercial use. Kindly ensure compliance with the terms outlined in the license file.
+Licensed under [MIT License](LICENSE). Scripts provided as-is. **Always test in non-production environments first.** No liability for damages.
 
-## 🚨 Disclaimer
+## 🔗 Links
 
-The scripts provided herein are designed for use at your discretion and risk. While we endeavor to maintain their reliability and efficacy, we cannot guarantee their performance across all environments. Prior to deploying scripts to critical systems, always conduct thorough testing in non-production environments. We disclaim any liability for damages or losses arising from script usage.
+- [TacticalRMM Repo](https://github.com/amidaware/tacticalrmm)
+- [TacticalRMM Docs](https://docs.tacticalrmm.com/)
 
-## 🔗 TacticalRMM Links
+---
 
-- [TacticalRMM Project Repo](https://github.com/amidaware/tacticalrmm)
-- [TacticalRMM Project Documentation](https://docs.tacticalrmm.com/)
-
-### 📐 Naming Convention
-
-Scripts follow: `Category - Descriptive Title.ext`. Key categories: Check, Monitor, Audit, Collect, Software Management, Security, Network, Agent, Maintain, Customize, Cron, Image. See `NAMING-CONVENTION.md` for details and current rename batches.
-
-Happy scripting! 🌈
+**Repository:** [Nerdy-Technician/Nerdy-RMMScripts](https://github.com/Nerdy-Technician/Nerdy-RMMScripts)

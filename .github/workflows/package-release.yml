@@ -79,16 +79,18 @@ jobs:
           cd release
           echo "Generating SHA256SUMS.txt"
           rm -f SHA256SUMS.txt
-          for f in Nerdy-RMMScripts-*Scripts.zip ReleaseNotes-*.md; do
-            sha256sum "$f" >> SHA256SUMS.txt
+          for f in Nerdy-RMMScripts-Windows.zip Nerdy-RMMScripts-Linux.zip ReleaseNotes-*.md; do
+            if [ -f "$f" ]; then sha256sum "$f" >> SHA256SUMS.txt; fi
           done
           echo '{"generated":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","tag":"'${{ steps.tags.outputs.current_tag }}'","previous":"'${{ steps.tags.outputs.previous_tag }}'","archives":[' > manifest.json
           first=1
-          for a in Nerdy-RMMScripts-*Scripts.zip; do
-            size=$(stat -c %s "$a")
-            if [ $first -eq 0 ]; then echo ',' >> manifest.json; fi
-            echo '{"name":"'$a'","size":'$size'}' >> manifest.json
-            first=0
+          for a in Nerdy-RMMScripts-Windows.zip Nerdy-RMMScripts-Linux.zip; do
+            if [ -f "$a" ]; then
+              size=$(stat -c %s "$a")
+              if [ $first -eq 0 ]; then echo ',' >> manifest.json; fi
+              echo '{"name":"'$a'","size":'$size'}' >> manifest.json
+              first=0
+            fi
           done
           echo '],"notes":[' >> manifest.json
           first=1

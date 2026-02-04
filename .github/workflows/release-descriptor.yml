@@ -46,8 +46,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p release_out
-          zip -r release_out/TRMM-Windows-Scripts.zip Windows -x "*/.git/*"
-          zip -r release_out/TRMM-Linux-Scripts.zip Linux -x "*/.git/*"
+          zip -r release_out/Nerdy-RMMScripts-Windows.zip Windows -x "*/.git/*"
+          zip -r release_out/Nerdy-RMMScripts-Linux.zip Linux -x "*/.git/*"
           PREV="$(git tag --sort=-creatordate | grep -v "^${{ steps.version.outputs.version }}$" | grep '^v' | head -1 || true)"
           if [ -n "${PREV}" ]; then git diff --name-status "${PREV}"...HEAD > release_out/diff.txt; else git diff --name-status HEAD > release_out/diff.txt; fi
           A=$(grep '^A' release_out/diff.txt | wc -l | tr -d ' ' || true)
@@ -71,8 +71,8 @@ jobs:
             fi
             echo
             echo "### 📦 Archives"
-            echo "- TRMM-Windows-Scripts.zip"
-            echo "- TRMM-Linux-Scripts.zip"
+            echo "- Nerdy-RMMScripts-Windows.zip"
+            echo "- Nerdy-RMMScripts-Linux.zip"
           } > release_out/body.md
           sha256sum release_out/*.zip > release_out/SHA256SUMS.txt
 
@@ -93,8 +93,8 @@ jobs:
           name: ${{ steps.version.outputs.version }}
           body_path: release_out/body.md
           files: |
-            release_out/TRMM-Windows-Scripts.zip
-            release_out/TRMM-Linux-Scripts.zip
+            release_out/Nerdy-RMMScripts-Windows.zip
+            release_out/Nerdy-RMMScripts-Linux.zip
             release_out/SHA256SUMS.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

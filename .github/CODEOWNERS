@@ -1,8 +1,7 @@
 # Lines matching patterns will assign code ownership.
 # Adjust GitHub usernames or teams below.
 
-* @Brandon-Roff
-docs/** @Brandon-Roff
-Linux/** @Brandon-Roff
-Windows/** @Brandon-Roff
-.github/workflows/** @Brandon-Roff
+* @Nerdy-Technician
+Linux/** @Nerdy-Technician
+Windows/** @Nerdy-Technician
+.github/workflows/** @Nerdy-Technician

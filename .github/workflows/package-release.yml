@@ -22,8 +22,8 @@ permissions:
   contents: write
 
 env:
-  WINDOWS_ARCHIVE: TRMM-Windows-Scripts.zip
-  LINUX_ARCHIVE: TRMM-Linux-Scripts.zip
+  WINDOWS_ARCHIVE: Nerdy-RMMScripts-Windows.zip
+  LINUX_ARCHIVE: Nerdy-RMMScripts-Linux.zip
 
 jobs:
   build-and-package:
@@ -79,12 +79,12 @@ jobs:
           cd release
           echo "Generating SHA256SUMS.txt"
           rm -f SHA256SUMS.txt
-          for f in TRMM-*Scripts.zip ReleaseNotes-*.md; do
+          for f in Nerdy-RMMScripts-*Scripts.zip ReleaseNotes-*.md; do
             sha256sum "$f" >> SHA256SUMS.txt
           done
           echo '{"generated":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","tag":"'${{ steps.tags.outputs.current_tag }}'","previous":"'${{ steps.tags.outputs.previous_tag }}'","archives":[' > manifest.json
           first=1
-          for a in TRMM-*Scripts.zip; do
+          for a in Nerdy-RMMScripts-*Scripts.zip; do
             size=$(stat -c %s "$a")
             if [ $first -eq 0 ]; then echo ',' >> manifest.json; fi
             echo '{"name":"'$a'","size":'$size'}' >> manifest.json
@@ -145,8 +145,8 @@ jobs:
           PREV='${{ steps.tags.outputs.previous_tag }}'
           CUR='${{ steps.version.outputs.new_tag || steps.tags.outputs.current_tag }}'
           if [ -n "$PREV" ]; then
-            TABLE=$(git diff --name-status "$PREV" "$CUR" | awk 'BEGIN{print "| Status | File |"; print "|--------|------|"} {s=$1; f=$2; if(s=="R"){f=$3} emoji=""; if(s=="A")emoji="🆕"; else if(s=="M")emoji="✏️"; else if(s=="D")emoji="🗑️"; else if(s=="R")emoji="🔁"; else if(s=="C")emoji="📄"; print "| " emoji " " s " | " f " |"}')
-            COUNTS=$(git diff --name-status "$PREV" "$CUR" | awk '{c[$1]++} END{for(k in c){emoji=""; if(k=="A")emoji="🆕"; else if(k=="M")emoji="✏️"; else if(k=="D")emoji="🗑️"; else if(k=="R")emoji="🔁"; else if(k=="C")emoji="📄"; print "- " emoji " " k ":" c[k]}}')
+          TABLE=$(git diff --name-status "$PREV" "$CUR" | awk 'BEGIN{print "| Status | File |"; print "|--------|------|";} {s=$1; f=$2; if(s=="R"){f=$3} emoji=""; if(s=="A")emoji="🆕"; else if(s=="M")emoji="✏️"; else if(s=="D")emoji="🗑️"; else if(s=="R")emoji="♻️"; else if(s=="C")emoji="📄"; print "| " emoji " " s " | " f " |"}')
+            COUNTS=$(git diff --name-status "$PREV" "$CUR" | awk '{c[$1]++} END{for(k in c){emoji=""; if(k=="A")emoji="🆕"; else if(k=="M")emoji="✏️"; else if(k=="D")emoji="🗑️"; else if(k=="R")emoji="♻️"; else if(k=="C")emoji="📄"; print "- " emoji " " k ":" c[k]}}')
             echo "table<<EOF" >> $GITHUB_OUTPUT
             echo "$TABLE" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
@@ -165,12 +165,12 @@ jobs:
           tag_name: ${{ steps.version.outputs.new_tag }}
           name: ${{ steps.version.outputs.new_tag }}
           body: |
-            ## 🚀 TRMM Scripts ${{ steps.version.outputs.new_tag }}
+            ## 🚀 Nerdy-RMMScripts Scripts ${{ steps.version.outputs.new_tag }}
             Prev Tag: `${{ steps.tags.outputs.previous_tag || '∅ initial' }}`
             Commit: `${{ github.sha }}` | Run: `${{ github.run_id }}`
 
             ### 🔄 Changes
-            **Status Legend:** 🆕 Added | ✏️ Modified | 🗑️ Deleted | 🔁 Renamed
+            **Status Legend:** 🆕 Added | ✏️ Modified | 🗑️ Deleted | ♻️ Renamed
             ${{ steps.changes.outputs.initial == 'true' && 'Initial release – all current files included.' || '' }}
             ${{ steps.changes.outputs.initial == 'true' && '' || '**Counts:**' }}
             ${{ steps.changes.outputs.initial == 'true' && '' || steps.changes.outputs.counts }}

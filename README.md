@@ -44,14 +44,6 @@ See [NAMING-CONVENTION.md](NAMING-CONVENTION.md) for details.
 - [Naming Convention](NAMING-CONVENTION.md) - Complete standards
 - Category READMEs - Detailed script listings in each folder
 
-## 📝 Recent Updates (v0.1.6)
-
-- ✅ Removed 119 duplicate files
-- ✅ Renamed 13 batch files to convention
-- ✅ Reorganized Windows PowerShell structure
-- ✅ Fixed typo: Maintence → Maintenance
-- ✅ Updated all documentation
-
 ## 🤝 Contributing
 
 1. Follow naming: `<Category> - <Descriptive Title>.ext`

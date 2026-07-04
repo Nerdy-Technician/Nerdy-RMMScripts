@@ -162,7 +162,7 @@ jobs:
 
       - name: Auto create release from push
         if: steps.version.outputs.skip != 'true' && steps.version.outputs.new_tag && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.version.outputs.new_tag }}
           name: ${{ steps.version.outputs.new_tag }}
@@ -190,7 +190,7 @@ jobs:
 
       - name: Attach assets to release
         if: github.event_name == 'release' && github.event.inputs.dryRun != 'true'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             release/${{ env.WINDOWS_ARCHIVE }}

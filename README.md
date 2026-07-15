@@ -3,12 +3,6 @@
 
 **129+ scripts** for Any RMM for agents on Windows & Linux. Organized by category, professionally named, production-ready.
 
-## 📊 Quick Stats
-
-| Platform | Scripts | Categories |
-|----------|---------|-----------|
-| Linux | 76 | 12 categories |
-| Windows | 53 | PowerShell (40) + Batch (13) |
 
 ## 📂 Folder Structure
 

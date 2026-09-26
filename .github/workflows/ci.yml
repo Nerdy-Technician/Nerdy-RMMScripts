@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Scripts with existing ShellCheck errors (see PR description). They are
+      # reported without failing CI; remove them from this list once fixed.
+      KNOWN_ISSUES: |
+        Linux/Monitoring/Check - MeshAgent_is_running.sh
+        Linux/Monitoring/Check - Remotely_is_running.sh
+        Linux/Monitoring/Check - Wazuh_is_running.sh
+        Linux/Network/Network - Port Scan.sh
+    steps:
+      - uses: actions/checkout@v7
+      - name: ShellCheck (errors only)
+        run: |
+          shellcheck --version
+          git ls-files -z '*.sh' '*.bash' \
+            | grep -zvxF -f <(printf '%s\n' "$KNOWN_ISSUES" | sed '/^$/d') \
+            | xargs -0 -r shellcheck --severity=error
+      - name: ShellCheck known issues (report only)
+        continue-on-error: true
+        run: |
+          printf '%s\n' "$KNOWN_ISSUES" | sed '/^$/d' | tr '\n' '\0' \
+            | xargs -0 -r shellcheck --severity=error --format=gcc \
+            | sed -E 's/^([^:]+):([0-9]+):([0-9]+): error: (.*)$/::warning file=\1,line=\2,col=\3::\4/'
+
+  powershell:
+    name: PowerShell (PSScriptAnalyzer errors)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Analyze PowerShell scripts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not (Get-Module -ListAvailable -Name PSScriptAnalyzer)) {
+            Set-PSRepository PSGallery -InstallationPolicy Trusted
+            Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+          }
+          $files = git ls-files | Where-Object { $_ -match '\.(ps1|psm1|psd1)$' }
+          $failed = 0
+          foreach ($file in $files) {
+            $tokens = $null; $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file), [ref]$tokens, [ref]$parseErrors)
+            foreach ($e in $parseErrors) {
+              $failed++
+              Write-Output "::error file=$file,line=$($e.Extent.StartLineNumber)::$($e.Message)"
+            }
+            foreach ($r in Invoke-ScriptAnalyzer -Path $file -Severity Error) {
+              $failed++
+              Write-Output "::error file=$file,line=$($r.Line)::[$($r.RuleName)] $($r.Message)"
+            }
+          }
+          Write-Output "Analyzed $($files.Count) PowerShell files, $failed error(s)."
+          if ($failed -gt 0) { exit 1 }

@@ -52,10 +52,10 @@ jobs:
           zip -r release_out/Nerdy-RMMScripts-Linux.zip Linux -x "*/.git/*"
           PREV="$(git tag --sort=-creatordate | grep -v "^${VERSION}$" | grep '^v' | head -1 || true)"
           if [ -n "${PREV}" ]; then git diff --name-status "${PREV}"...HEAD > release_out/diff.txt; else git diff --name-status HEAD > release_out/diff.txt; fi
-          A=$(grep '^A' release_out/diff.txt | wc -l | tr -d ' ' || true)
-          M=$(grep '^M' release_out/diff.txt | wc -l | tr -d ' ' || true)
-          D=$(grep '^D' release_out/diff.txt | wc -l | tr -d ' ' || true)
-          R=$(grep '^R' release_out/diff.txt | wc -l | tr -d ' ' || true)
+          A=$(grep -c '^A' release_out/diff.txt || true)
+          M=$(grep -c '^M' release_out/diff.txt || true)
+          D=$(grep -c '^D' release_out/diff.txt || true)
+          R=$(grep -c '^R' release_out/diff.txt || true)
           {
             echo "## 🚀 Release ${VERSION}"
             [ -n "${PREV}" ] && echo "Previous Tag: ${PREV}" || echo "Initial Release"

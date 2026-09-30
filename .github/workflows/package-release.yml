@@ -19,7 +19,7 @@ on:
         default: 'false'
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   WINDOWS_ARCHIVE: Nerdy-RMMScripts-Windows.zip
@@ -28,17 +28,21 @@ env:
 jobs:
   build-and-package:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository (full history)
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: Debug event context
+        env:
+          TAG_INPUT: ${{ inputs.tag }}
         run: |
-          echo "Event: ${{ github.event_name }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Tag Input: ${{ inputs.tag }}"
+          echo "Event: $GITHUB_EVENT_NAME"
+          echo "Ref: $GITHUB_REF"
+          echo "Tag Input: $TAG_INPUT"
           git tag --list --sort=-creatordate | head -n 15
           echo "Commit message:" && git log -1 --pretty=%B
 
@@ -57,24 +61,31 @@ jobs:
             PREV_TAG="$t"; break
           done
           echo "Previous tag: $PREV_TAG"
-          echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
-          echo "previous_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "current_tag=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
+          echo "previous_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Run Windows packaging script (PowerShell Core)
         shell: pwsh
+        env:
+          PREV_TAG: ${{ steps.tags.outputs.previous_tag }}
         run: |
-          $prev = '${{ steps.tags.outputs.previous_tag }}'
+          $prev = $env:PREV_TAG
           if ($prev) { ./release/Create-Windows-Release.ps1 -PreviousTag $prev } else { ./release/Create-Windows-Release.ps1 }
 
       - name: Make Linux script executable
         run: chmod +x release/create-linux-release.sh
 
       - name: Run Linux packaging script
+        env:
+          PREV_TAG: ${{ steps.tags.outputs.previous_tag }}
         run: |
-          prev='${{ steps.tags.outputs.previous_tag }}'
+          prev="$PREV_TAG"
           if [ -n "$prev" ]; then ./release/create-linux-release.sh -p "$prev"; else ./release/create-linux-release.sh; fi
 
       - name: Compute checksums & JSON manifest
+        env:
+          CURRENT_TAG: ${{ steps.tags.outputs.current_tag }}
+          PREV_TAG: ${{ steps.tags.outputs.previous_tag }}
         run: |
           cd release
           echo "Generating SHA256SUMS.txt"
@@ -82,13 +93,13 @@ jobs:
           for f in Nerdy-RMMScripts-Windows.zip Nerdy-RMMScripts-Linux.zip ReleaseNotes-*.md; do
             if [ -f "$f" ]; then sha256sum "$f" >> SHA256SUMS.txt; fi
           done
-          echo '{"generated":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","tag":"'${{ steps.tags.outputs.current_tag }}'","previous":"'${{ steps.tags.outputs.previous_tag }}'","archives":[' > manifest.json
+          echo '{"generated":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","tag":"'"$CURRENT_TAG"'","previous":"'"$PREV_TAG"'","archives":[' > manifest.json
           first=1
           for a in Nerdy-RMMScripts-Windows.zip Nerdy-RMMScripts-Linux.zip; do
             if [ -f "$a" ]; then
               size=$(stat -c %s "$a")
-              if [ $first -eq 0 ]; then echo ',' >> manifest.json; fi
-              echo '{"name":"'$a'","size":'$size'}' >> manifest.json
+              if [ "$first" -eq 0 ]; then echo ',' >> manifest.json; fi
+              echo '{"name":"'"$a"'","size":'"$size"'}' >> manifest.json
               first=0
             fi
           done
@@ -96,15 +107,15 @@ jobs:
           first=1
           for n in ReleaseNotes-*.md; do
             size=$(stat -c %s "$n")
-            if [ $first -eq 0 ]; then echo ',' >> manifest.json; fi
-            echo '{"name":"'$n'","size":'$size'}' >> manifest.json
+            if [ "$first" -eq 0 ]; then echo ',' >> manifest.json; fi
+            echo '{"name":"'"$n"'","size":'"$size"'}' >> manifest.json
             first=0
           done
           echo ']}' >> manifest.json
           echo "Manifest:" && cat manifest.json
 
       - name: Upload artifacts (always)
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: packaged-scripts
           path: |
@@ -121,7 +132,7 @@ jobs:
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
           if echo "$COMMIT_MSG" | grep -qi '\[skip release\]'; then
-            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "Release skipped by commit message directive.";
             exit 0
           fi
@@ -130,39 +141,42 @@ jobs:
             NEW_TAG="v0.1.0"
           else
             LATEST=$(echo "$TAGS" | sort -V | tail -n1)
-            MAJOR=$(echo $LATEST | sed -E 's/v([0-9]+)\.[0-9]+\.[0-9]+/\1/')
-            MINOR=$(echo $LATEST | sed -E 's/v[0-9]+\.([0-9]+)\.[0-9]+/\1/')
-            PATCH=$(echo $LATEST | sed -E 's/v[0-9]+\.[0-9]+\.([0-9]+)/\1/')
+            MAJOR=$(echo "$LATEST" | sed -E 's/v([0-9]+)\.[0-9]+\.[0-9]+/\1/')
+            MINOR=$(echo "$LATEST" | sed -E 's/v[0-9]+\.([0-9]+)\.[0-9]+/\1/')
+            PATCH=$(echo "$LATEST" | sed -E 's/v[0-9]+\.[0-9]+\.([0-9]+)/\1/')
             PATCH=$((PATCH+1))
             NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
           fi
           echo "Computed next tag: $NEW_TAG"
-          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "new_tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
           git tag "$NEW_TAG"
           git push origin "$NEW_TAG"
 
       - name: Build changes markdown
         id: changes
+        env:
+          PREV: ${{ steps.tags.outputs.previous_tag }}
+          CUR: ${{ steps.version.outputs.new_tag || steps.tags.outputs.current_tag }}
         run: |
-          PREV='${{ steps.tags.outputs.previous_tag }}'
-          CUR='${{ steps.version.outputs.new_tag || steps.tags.outputs.current_tag }}'
           if [ -n "$PREV" ]; then
           TABLE=$(git diff --name-status "$PREV" "$CUR" | awk 'BEGIN{print "| Status | File |"; print "|--------|------|";} {s=$1; f=$2; if(s=="R"){f=$3} emoji=""; if(s=="A")emoji="🆕"; else if(s=="M")emoji="✏️"; else if(s=="D")emoji="🗑️"; else if(s=="R")emoji="♻️"; else if(s=="C")emoji="📄"; print "| " emoji " " s " | " f " |"}')
             COUNTS=$(git diff --name-status "$PREV" "$CUR" | awk '{c[$1]++} END{for(k in c){emoji=""; if(k=="A")emoji="🆕"; else if(k=="M")emoji="✏️"; else if(k=="D")emoji="🗑️"; else if(k=="R")emoji="♻️"; else if(k=="C")emoji="📄"; print "- " emoji " " k ":" c[k]}}')
-            echo "table<<EOF" >> $GITHUB_OUTPUT
-            echo "$TABLE" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            echo "counts<<EOF" >> $GITHUB_OUTPUT
-            echo "$COUNTS" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            echo "initial=false" >> $GITHUB_OUTPUT
+            {
+              echo "table<<EOF"
+              echo "$TABLE"
+              echo "EOF"
+              echo "counts<<EOF"
+              echo "$COUNTS"
+              echo "EOF"
+              echo "initial=false"
+            } >> "$GITHUB_OUTPUT"
           else
-            echo "initial=true" >> $GITHUB_OUTPUT
+            echo "initial=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Auto create release from push
         if: steps.version.outputs.skip != 'true' && steps.version.outputs.new_tag && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           tag_name: ${{ steps.version.outputs.new_tag }}
           name: ${{ steps.version.outputs.new_tag }}
@@ -190,7 +204,7 @@ jobs:
 
       - name: Attach assets to release
         if: github.event_name == 'release' && github.event.inputs.dryRun != 'true'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: |
             release/${{ env.WINDOWS_ARCHIVE }}

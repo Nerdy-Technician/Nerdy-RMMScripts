@@ -1,15 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    allow:
-      - dependency-type: "direct"
-    labels:
-      - "deps"
-      - "security"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -17,3 +7,6 @@ updates:
     labels:
       - "actions"
       - "security"
+    groups:
+      actions:
+        patterns: ["*"]

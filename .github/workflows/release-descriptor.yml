@@ -7,9 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  actions: read
-  packages: read
+  contents: read
 
 concurrency:
   group: release-descriptor
@@ -18,9 +16,11 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -43,19 +43,21 @@ jobs:
 
       - name: Build archives + diff
         if: steps.version.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
           mkdir -p release_out
           zip -r release_out/Nerdy-RMMScripts-Windows.zip Windows -x "*/.git/*"
           zip -r release_out/Nerdy-RMMScripts-Linux.zip Linux -x "*/.git/*"
-          PREV="$(git tag --sort=-creatordate | grep -v "^${{ steps.version.outputs.version }}$" | grep '^v' | head -1 || true)"
+          PREV="$(git tag --sort=-creatordate | grep -v "^${VERSION}$" | grep '^v' | head -1 || true)"
           if [ -n "${PREV}" ]; then git diff --name-status "${PREV}"...HEAD > release_out/diff.txt; else git diff --name-status HEAD > release_out/diff.txt; fi
-          A=$(grep '^A' release_out/diff.txt | wc -l | tr -d ' ' || true)
-          M=$(grep '^M' release_out/diff.txt | wc -l | tr -d ' ' || true)
-          D=$(grep '^D' release_out/diff.txt | wc -l | tr -d ' ' || true)
-          R=$(grep '^R' release_out/diff.txt | wc -l | tr -d ' ' || true)
+          A=$(grep -c '^A' release_out/diff.txt || true)
+          M=$(grep -c '^M' release_out/diff.txt || true)
+          D=$(grep -c '^D' release_out/diff.txt || true)
+          R=$(grep -c '^R' release_out/diff.txt || true)
           {
-            echo "## 🚀 Release ${{ steps.version.outputs.version }}"
+            echo "## 🚀 Release ${VERSION}"
             [ -n "${PREV}" ] && echo "Previous Tag: ${PREV}" || echo "Initial Release"
             echo
             echo "### 📊 Changes"
@@ -78,16 +80,18 @@ jobs:
 
       - name: Create tag
         if: steps.version.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "${{ steps.version.outputs.version }}"
-          git push origin "${{ steps.version.outputs.version }}"
+          git tag "${VERSION}"
+          git push origin "${VERSION}"
 
       - name: Publish release
         if: steps.version.outputs.skip != 'true'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           tag_name: ${{ steps.version.outputs.version }}
           name: ${{ steps.version.outputs.version }}
